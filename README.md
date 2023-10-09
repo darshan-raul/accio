@@ -103,6 +103,12 @@ The name comes from the famous Summoning Charm from the Harry potter movies. Eve
 ## How to start
 
 
+## Installation steps:
+
+- Install the cobra package:
+`go install github.com/spf13/cobra-cli@latest`
+- 
+
 ## Roadmap
 
 phase 1:
