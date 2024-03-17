@@ -1,4 +1,4 @@
-module github.com/darshan-raul/accio
+module github.com/darshan-raul/accio/api
 
 go 1.22.1
 
