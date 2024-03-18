@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: accio
+  name: accio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accio
+  template:
+    metadata:
+      labels:
+        app: accio
+    spec:
+      containers:
+      - image: accio:latest
+        name: accio
+        imagePullPolicy: Never
