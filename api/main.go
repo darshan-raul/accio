@@ -1,29 +1,51 @@
 package main
 
 import (
-    //"github.com/gofiber/fiber/v2"
-    "github.com/darshan-raul/accio/api/db"
-    "github.com/darshan-raul/accio/api/models"
+	"github.com/gofiber/fiber/v2"
+	"fmt"
+
+	"github.com/darshan-raul/accio/api/db"
+	"github.com/darshan-raul/accio/api/models"
+    "github.com/darshan-raul/accio/api/routes"
 )
+
 func main() {
-    // app := fiber.New()
+    app := fiber.New()
 
-    // app.Get("/ping", func(c *fiber.Ctx) error {
-    //     return c.SendString("pong")
-    // })
+    app.Get("/ping", func(c *fiber.Ctx) error {
+        return c.SendString("pong")
+    })
 
-    // app.Get("/resource", func(c *fiber.Ctx) error {
+    app.Get("/cloud", routes.GetClouds)
+    app.Get("/cloud/:cloud", routes.GetCloud)
+    app.Get("/type", routes.GetResourceTypes)
 
-    //     return c.SendString("resource")
-    // })
+    defer app.Listen(":3000")
 
-    // app.Listen(":3000")
+    handleDbMigrationsSeeding()
+    
+}
+
+func handleDbMigrationsSeeding(){
 
     dbConn := db.DbConn()
 
-    dbConn.AutoMigrate(&models.Cloud{},&models.Resource{},&models.Type{})
+    dbConn.AutoMigrate(&models.Cloud{},&models.Resource{},&models.Resouretype{})
+    
+    var count int64 //because Count() returns int64
 
-    dbConn.Create(&models.Cloud{Name: "AWS"})
-    dbConn.Create(&models.Cloud{Name: "Azure"})
-    dbConn.Create(&models.Cloud{Name: "GCP"})
+	dbConn.Model(&models.Cloud{}).Count(&count)
+	if count > 0 {
+		fmt.Println("seed data already exists, skipping creation of initial data")
+	}else {
+        cloudData := []models.Cloud{
+            {Name: "Amazon Web Services", Code: "AWS"},
+            {Name: "Azure", Code: "Azure"},
+            {Name: "Google Cloud Platform", Code: "GCP"},
+        }
+        for _,entry := range cloudData{
+            dbConn.Create(&entry)
+        }
+
+    }
 }

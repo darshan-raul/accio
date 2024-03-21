@@ -9,11 +9,11 @@ type Resource struct {
 	gorm.Model
 	Name  string
 	TypeID uint
-	Type Type
+	Type Resouretype
 }
 
 
-type Type struct {
+type Resouretype struct {
 	gorm.Model
 	Name string
 	CloudID uint
@@ -22,9 +22,8 @@ type Type struct {
 }
 
 type Cloud struct {
-
 	gorm.Model
 	Name string
-
+	Code string
 }
 
