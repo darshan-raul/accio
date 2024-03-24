@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment: &env # these will be reused below [compose fragment concept]
+      POSTGRES_PASSWORD: accio
+      POSTGRES_USER: accio
+      POSTGRES_DB: accio
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+  core_api:
+    build: ./core/
+    ports:
+      - "3000:3000"
+    develop:
+      watch:
+        - path: ./core/
+          action: rebuild
+    environment:
+      <<: *env 
+      POSTGRES_HOST: "db"
+      POSTGRES_PORT: "5432"
+    depends_on:
+      - "db"
+    networks:
+      - backend
+  validator_api:
+    build: ./validator/
+    ports:
+      - "8000:8000"
+    develop:
+      watch:
+        - path: ./validator/
+          action: rebuild
+    environment:
+      CORE_API: "core_api"
+    depends_on:
+      - "core_api"
+    networks:
+      - backend
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+
+volumes:
+  db-data:
+    name: "postgres"
+networks:
+  backend:

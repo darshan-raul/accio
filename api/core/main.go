@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"fmt"
 
-	// "github.com/darshan-raul/accio/api/db"
-	// "github.com/darshan-raul/accio/api/models"
+	"github.com/darshan-raul/accio/api/db"
+	"github.com/darshan-raul/accio/api/models"
     "github.com/darshan-raul/accio/api/routes"
 )
 
@@ -28,25 +28,25 @@ func main() {
 
 func handleDbMigrationsSeeding(){
 
-    fmt.Println("test")
-    // dbConn := db.DbConn()
+    fmt.Println("docker compose watch")
+    dbConn := db.DbConn()
 
-    // dbConn.AutoMigrate(&models.Cloud{},&models.Resource{},&models.Resouretype{})
+    dbConn.AutoMigrate(&models.Cloud{},&models.Resource{},&models.Resouretype{})
     
-    // var count int64 //because Count() returns int64
+    var count int64 //because Count() returns int64
 
-	// dbConn.Model(&models.Cloud{}).Count(&count)
-	// if count > 0 {
-	// 	fmt.Println("seed data already exists, skipping creation of initial data")
-	// }else {
-    //     cloudData := []models.Cloud{
-    //         {Name: "Amazon Web Services", Code: "AWS"},
-    //         {Name: "Azure", Code: "Azure"},
-    //         {Name: "Google Cloud Platform", Code: "GCP"},
-    //     }
-    //     for _,entry := range cloudData{
-    //         dbConn.Create(&entry)
-    //     }
+	dbConn.Model(&models.Cloud{}).Count(&count)
+	if count > 0 {
+		fmt.Println("seed data already exists, skipping creation of initial data")
+	}else {
+        cloudData := []models.Cloud{
+            {Name: "Amazon Web Services", Code: "AWS"},
+            {Name: "Azure", Code: "Azure"},
+            {Name: "Google Cloud Platform", Code: "GCP"},
+        }
+        for _,entry := range cloudData{
+            dbConn.Create(&entry)
+        }
 
-    // }
+    }
 }
