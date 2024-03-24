@@ -1,2 +1,4 @@
 tmp
 **/storage/
+**/venv
+**/__pycache__
