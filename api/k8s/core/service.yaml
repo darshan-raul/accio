@@ -5,9 +5,6 @@ metadata:
     app: accio
   name: accio
 spec:
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
   ports:
   - port: 3000
     protocol: TCP

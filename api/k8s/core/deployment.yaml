@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: accio
+  name: accio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accio
+  template:
+    metadata:
+      labels:
+        app: accio
+    spec:
+      containers:
+      - image: api-core_api:latest
+        name: accio
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+          name: postgres
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "accio"
+        - name: POSTGRES_USER
+          value: "accio"
+        - name: POSTGRES_DB
+          value: "accio"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_HOST
+          value: "postgres-0.postgres.default.svc.cluster.local"
