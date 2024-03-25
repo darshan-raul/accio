@@ -1,0 +1,4 @@
+config:
+  accio:nodesPerZone: "1"
+  gcp:project: direct-topic-404117
+  gcp:region: asia-south1
