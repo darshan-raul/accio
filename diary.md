@@ -10,3 +10,10 @@ converted a 514mb image to a 15 mb one and it still worked seamlessly
 made 2 services and postgres [as a statefulset] run in a local kind cluster
 
 ![alt text](image-4.png)
+
+
+created gke cluster using pulumi and ran nginx on it
+
+![alt text](image-5.png)
+
+

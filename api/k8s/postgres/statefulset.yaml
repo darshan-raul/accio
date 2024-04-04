@@ -31,6 +31,9 @@ spec:
           value: "accio"
         - name: POSTGRES_DB
           value: "accio"
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/some_name/"
+
       volumes:
         - name: postgres
           persistentVolumeClaim:

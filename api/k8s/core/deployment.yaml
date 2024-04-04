@@ -30,12 +30,15 @@ spec:
             cpu: "500m"
         env:
         - name: POSTGRES_PASSWORD
-          value: "accio"
+          valueFrom:
+            secretKeyRef:
+              name: postgres-auth
+              key: password
         - name: POSTGRES_USER
-          value: "accio"
-        - name: POSTGRES_DB
-          value: "accio"
-        - name: POSTGRES_PORT
-          value: "5432"
-        - name: POSTGRES_HOST
-          value: "postgres-0.postgres.default.svc.cluster.local"
+          valueFrom:
+            secretKeyRef:
+              name: postgres-auth
+              key: username
+        envFrom:
+        - configMapRef:
+            name: postgres-configmap
