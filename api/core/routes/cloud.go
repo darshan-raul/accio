@@ -7,6 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+//TODO: move the cloud grab logic to diff controller package
+
 func GetClouds(c *fiber.Ctx) error {
 	clouds := []models.Cloud{}
 	dbConn := db.DbConn()
@@ -14,6 +16,7 @@ func GetClouds(c *fiber.Ctx) error {
     return c.JSON(clouds)
 }
 
+//TODO: move the cloud grab logic to diff controller package
 
 func GetCloud(c *fiber.Ctx) error {
 	cloud := c.Params("cloud")
