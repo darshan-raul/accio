@@ -28,7 +28,6 @@ func main() {
 
 func handleDbMigrationsSeeding(){
 
-    fmt.Println("docker compose watch")
     dbConn := db.DbConn()
 
     dbConn.AutoMigrate(&models.Cloud{},&models.Resource{},&models.Resouretype{})
