@@ -19,6 +19,7 @@ func main() {
     app.Get("/cloud", routes.GetClouds)
     app.Get("/cloud/:cloud", routes.GetCloud)
     app.Get("/type", routes.GetResourceTypes)
+    app.Post("/resourcetype",routes.CreateResourceType)
 
     defer app.Listen(":3000")
 
@@ -46,6 +47,8 @@ func handleDbMigrationsSeeding(){
         for _,entry := range cloudData{
             dbConn.Create(&entry)
         }
+
+        
 
     }
 }
