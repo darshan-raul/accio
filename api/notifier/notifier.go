@@ -13,7 +13,7 @@ import (
 
 func main() {
     topic := "quickstart-events"
-    
+    webhook_url := os.Getenv("WEBHOOK_URL")
     consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
         "bootstrap.servers": "localhost:9092",
         "group.id":          "go",
@@ -46,8 +46,8 @@ func main() {
 			msg := slack.WebhookMessage{
 				Attachments: []slack.Attachment{attachment},
 			}
-		
-			err := slack.PostWebhook("https://hooks.slack.com/services/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", &msg)
+			
+			err := slack.PostWebhook(webhook_url, &msg)
 			if err != nil {
 				fmt.Println(err)
 			}

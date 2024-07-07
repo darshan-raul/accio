@@ -14,6 +14,11 @@ made 2 services and postgres [as a statefulset] run in a local kind cluster
 
 created gke cluster using pulumi and ran nginx on it
 
-![alt text](image-5.png)
+![alt text](images/diary/image-5.png)
 
 
+added kafka to the mix and sending updates to slack
+
+![alt text](images/diary/kafka-docker-compose.png)
+
+![alt text](images/diary/slack-update.png)
