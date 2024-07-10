@@ -2,3 +2,5 @@ tmp
 **/storage/
 **/venv
 **/__pycache__
+
+gcp-credentials.json

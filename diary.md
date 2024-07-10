@@ -22,3 +22,7 @@ added kafka to the mix and sending updates to slack
 ![alt text](images/diary/kafka-docker-compose.png)
 
 ![alt text](images/diary/slack-update.png)
+
+created bucket using crossplane in gcp
+
+![alt text](images/diary/crossplane-bucket.png)
