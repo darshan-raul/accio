@@ -26,3 +26,7 @@ added kafka to the mix and sending updates to slack
 created bucket using crossplane in gcp
 
 ![alt text](images/diary/crossplane-bucket.png)
+
+created a pod using client-go, also listed nodes and pods
+
+![alt text](images/diary/podcreate.png)
