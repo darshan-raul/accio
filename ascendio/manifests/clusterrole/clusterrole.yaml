@@ -1,0 +1,42 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gcp-bucket-admin
+rules:
+- apiGroups:
+  - storage.gcp.upbound.io
+  resources:
+  - bucketaccesscontrols
+  - bucketaccesscontrols/status
+  - bucketacls
+  - bucketacls/status
+  - bucketiammembers
+  - bucketiammembers/status
+  - bucketobjects
+  - bucketobjects/status
+  - buckets
+  - buckets/status
+  - defaultobjectaccesscontrols
+  - defaultobjectaccesscontrols/status
+  - defaultobjectacls
+  - defaultobjectacls/status
+  - notifications
+  - notifications/status
+  - objectaccesscontrols
+  - objectaccesscontrols/status
+  - objectacls
+  - objectacls/status
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - create
+- apiGroups:
+  - storage.gcp.upbound.io
+  - gcp.upbound.io
+  resources:
+  - '*/finalizers'
+  verbs:
+  - update

@@ -2,65 +2,48 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-
-
-func main(){
-
-	rules := clientcmd.NewDefaultClientConfigLoadingRules()
-	kubeconfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(rules, &clientcmd.ConfigOverrides{})
-	config, err := kubeconfig.ClientConfig()
-
+func main() {
+	kubeconfig := flag.String("kubeconfig", "/home/darshan_raul9/.kube/config", "location to your kubeconfig file")
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		panic(err)
+		// handle error
+		fmt.Printf("erorr %s building config from flags\n", err.Error())
+		config, err = rest.InClusterConfig()
+		if err != nil {
+			fmt.Printf("error %s, getting inclusterconfig", err.Error())
+		}
 	}
-
-	clientset := kubernetes.NewForConfigOrDie(config)
-
-	nodeList, err := clientset.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
-
+	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		panic(err)
+		// handle error
+		fmt.Printf("error %s, creating clientset\n", err.Error())
 	}
-	fmt.Println("*** nodes in the cluster ***")
-	for _,n := range nodeList.Items{
-		fmt.Println(n.Name)
+	ctx := context.Background()
+	pods, err := clientset.CoreV1().Pods("default").List(ctx, metav1.ListOptions{})
+	if err != nil {
+		// handle error
+		fmt.Printf("error %s, while listing all the pods from default namespace\n", err.Error())
 	}
-
-	podList, err := clientset.CoreV1().Pods("").List(context.Background(), metav1.ListOptions{})
+	fmt.Println("Pods from default namespace")
+	for _, pod := range pods.Items {
+		fmt.Printf("%+v\n", pod.Name)
+	}
 	
+	fmt.Println("Deployments are")
+	deployments, err := clientset.AppsV1().Deployments("default").List(ctx, metav1.ListOptions{})
 	if err != nil {
-		panic(err)
+		fmt.Printf("listing deployments %s\n", err.Error())
 	}
-	fmt.Println("*** pods in the cluster ***")
-	for _,n := range podList.Items{
-		fmt.Println(n.Name)
+	for _, d := range deployments.Items {
+		fmt.Printf("%s", d.Name)
 	}
-
-	newPod :=  &corev1.Pod{
-		ObjectMeta:  metav1.ObjectMeta{
-			Name: "test-pod",
-		},
-		Spec: corev1.PodSpec{
-			Containers: []corev1.Container{
-				{Name: "busybox", Image: "busybox:latest", Command: []string{"sleep","100000"}},
-			},
-		},
-	}
-
-	pod,err := clientset.CoreV1().Pods("default").Create(context.Background(),newPod,metav1.CreateOptions{})
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("*** creating a new pod ***")
-	fmt.Println(pod)
-
-
 }

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lister
+spec:
+  ServiceAccountName: bucket-lister
+  containers:
+  - image: lister:latest
+    imagePullPolicy: Never
+    name: lister
+
