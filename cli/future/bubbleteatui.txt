@@ -1,0 +1,169 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"os"
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/lipgloss"
+)
+
+// Define a custom list item
+type item struct {
+	title       string
+	description string
+}
+
+func (i item) Title() string       { return i.title }
+func (i item) Description() string { return i.description }
+func (i item) FilterValue() string { return i.title }
+
+// Define the main model
+
+type model struct {
+	optionsList topList
+	infraview bottomList
+
+}
+
+func (m model) Init() tea.Cmd {
+
+	return nil
+}
+
+func (m model) View() string{
+	separator := lipgloss.NewStyle().
+		Width(200).
+		Border(lipgloss.NormalBorder(), false, false, true, false).
+		String()
+	return lipgloss.JoinVertical(lipgloss.Left, m.optionsList.View(), separator, m.infraview.stackList.View())
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd){
+	var cmds []tea.Cmd
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+
+	}
+	}
+
+	var cmd tea.Cmd
+	m.optionsList.options , cmd = m.optionsList.Update(msg)
+	cmds = append(cmds, cmd)
+
+	return m,  tea.Batch(cmds...)
+}
+
+
+type topList struct {
+	options list.Model
+}
+
+type bottomList struct {
+	stackList list.Model
+}
+
+func newTopList() topList {
+	// Top list options
+	topItems := []list.Item{
+		item{title: "list stack", description: "List the current stacks"},
+		item{title: "delete stack", description: "Delete a stack"},
+	}
+
+	// Create list models
+	const defaultWidth = 20
+	const listHeight = 20
+
+	options := list.New(topItems, list.NewDefaultDelegate(), defaultWidth, len(topItems)+10)
+	options.Title = "Operations"
+	options.SetShowPagination(false)
+	options.SetFilteringEnabled(false)
+	options.SetShowHelp(false)
+	options.SetShowStatusBar(false)
+
+
+
+	return topList{
+		options,
+	}
+}
+
+
+func newbottomList() bottomList {
+
+	// Bottom list items (initially empty)
+	bottomItems := []list.Item{}
+
+	// Create list models
+	const defaultWidth = 20
+	const listHeight = 5
+
+	stackList := list.New(bottomItems, list.NewDefaultDelegate(), defaultWidth, listHeight)
+	stackList.Title = "Stacks"
+
+	return bottomList{
+		stackList: stackList,
+	}
+}
+
+
+
+
+func newModel(optionsList topList, infraview bottomList ) model{
+	model := model{
+		optionsList: optionsList,
+		infraview: infraview,
+	}
+	return model
+}
+
+
+func (m topList) Init() tea.Cmd {
+	return nil
+}
+
+func (m topList) Update(msg tea.Msg) (list.Model, tea.Cmd) {
+
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return list.Model{}, tea.Quit
+
+	}
+	}
+	var cmd tea.Cmd
+	m.options, cmd = m.options.Update(msg)
+	
+
+	return m.options, cmd
+}
+
+func (m topList) View() string {
+	topView := m.options.View()
+
+
+
+
+	return lipgloss.JoinHorizontal(lipgloss.Left, topView)
+}
+
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+
+	bottomList := newbottomList()
+	upperList := newTopList()
+
+	p := tea.NewProgram(newModel(upperList,bottomList),tea.WithAltScreen())
+	if _,err := p.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}

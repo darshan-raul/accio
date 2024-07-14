@@ -6,19 +6,23 @@ package cmd
 
 import (
 	"os"
-
 	"github.com/spf13/cobra"
 )
-
 
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "accio",
-	Short: "A brief description of your application",
+	Short: "Accio - Make cloud native infra management great again",
+	Long: `
+
+	
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	// Run: func(cmd *cobra.Command, args []string) { 
+	// 	fmt.Println("hi")
+	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
