@@ -30,3 +30,11 @@ created bucket using crossplane in gcp
 created a pod using client-go, also listed nodes and pods
 
 ![alt text](images/diary/podcreate.png)
+
+got cobra and charm huh working for initial cli idea
+
+![alt text](images/diary/cobrainit.png)
+
+simple go fiber template working, will take it forward from here
+
+![alt text](images/diary/gofiberinit.png)
