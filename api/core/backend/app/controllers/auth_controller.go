@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/darshan-raul/acciof/core/app/models"
+	"github.com/darshan-raul/accio/core/app/models"
 	"github.com/darshan-raul/accio/core/pkg/utils"
 	"github.com/darshan-raul/accio/core/platform/cache"
 	"github.com/darshan-raul/accio/core/platform/database"
@@ -249,7 +249,7 @@ func UserSignOut(c *fiber.Ctx) error {
 		})
 	}
 
-	// Save refresh token to Redis.
+	// Delete refresh token to Redis.
 	errDelFromRedis := connRedis.Del(context.Background(), userID).Err()
 	if errDelFromRedis != nil {
 		// Return status 500 and Redis deletion error.

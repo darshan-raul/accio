@@ -1,8 +1,6 @@
 # accio
 
-Create and manage infra accross cloud providers with abstactrations and have them be managed in a gitops fashion.
-
-The name comes from the famous Summoning Charm from the Harry potter movies. Ever needed something desperately at a particular moment, but it was just out of reach? Of course, you have. This enables one to call upon objects from virtually anywhere and have them brought to the caster's current location. 
+Cli based tool to create and manage multi cloud resources in a gitops fashion [ArgoCD] managed directly as k8s custom resources [Crossplane].
 
 
 ## Architecture
@@ -17,11 +15,9 @@ The name comes from the famous Summoning Charm from the Harry potter movies. Eve
 ### Prerequisites
 
 - You will need to create following credentials with appropriate access to them 
-    - Cloud provider creds
-        - Save them and use them when accio prompts for same
+    - Cloud provider credentials
     - Git provider creds
-        - Save them and use them when accio prompts for same
-        
+    
 ### Concepts
 
 - Project:
