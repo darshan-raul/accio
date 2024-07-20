@@ -38,3 +38,13 @@ got cobra and charm huh working for initial cli idea
 simple go fiber template working, will take it forward from here
 
 ![alt text](images/diary/gofiberinit.png)
+
+
+created this initial schema for the database
+
+![alt text](images/diary/dbinitialschema.png)
+
+
+added first route and controller entry to get cloud providers from database
+
+![alt text](images/diary/firstroute.png)

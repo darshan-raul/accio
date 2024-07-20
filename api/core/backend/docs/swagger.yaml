@@ -39,6 +39,18 @@ definitions:
         minimum: 1
         type: integer
     type: object
+  models.CloudProv:
+    properties:
+      id:
+        description: validate:"required"`
+        type: integer
+      name:
+        description: validate:"required"`
+        type: string
+      slug:
+        description: validate:"required"`
+        type: string
+    type: object
   models.User:
     properties:
       created_at:
@@ -233,6 +245,23 @@ paths:
       summary: get all exists books
       tags:
       - Books
+  /v1/cloudprovs:
+    get:
+      consumes:
+      - application/json
+      description: Get all exists cloud providers.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.CloudProv'
+            type: array
+      summary: get all exists cloud providers
+      tags:
+      - CloudProvs
   /v1/token/renew:
     post:
       consumes:

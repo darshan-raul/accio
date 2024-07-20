@@ -4,6 +4,11 @@ CREATE TABLE "cloudproviders" (
   "slug" varchar
 );
 
+INSERT INTO cloudproviders (name, slug) VALUES ('Amazon Web Services', 'aws');
+INSERT INTO cloudproviders (name, slug) VALUES ('Google Cloud Platform', 'gcp');
+INSERT INTO cloudproviders (name, slug) VALUES ('Microsoft Azure', 'azure');
+
+
 CREATE TABLE "projects" (
   "id" SERIAL PRIMARY KEY ,
   "name" varchar,

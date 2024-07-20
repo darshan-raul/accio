@@ -266,6 +266,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/cloudprovs": {
+            "get": {
+                "description": "Get all exists cloud providers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CloudProvs"
+                ],
+                "summary": "get all exists cloud providers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.CloudProv"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/token/renew": {
             "post": {
                 "security": [
@@ -482,6 +508,23 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 10,
                     "minimum": 1
+                }
+            }
+        },
+        "models.CloudProv": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "validate:\"required\"` + "`" + `",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "validate:\"required\"` + "`" + `",
+                    "type": "string"
+                },
+                "slug": {
+                    "description": "validate:\"required\"` + "`" + `",
+                    "type": "string"
                 }
             }
         },

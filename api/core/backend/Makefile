@@ -83,3 +83,5 @@ docker.stop.redis:
 
 swag:
 	swag init
+
+docker.restart: docker.stop docker.run
