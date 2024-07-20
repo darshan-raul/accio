@@ -36,6 +36,7 @@ func PostgreSQLConnection() (*sqlx.DB, error) {
 	// 	- SetMaxOpenConns: the default is 0 (unlimited)
 	// 	- SetMaxIdleConns: defaultMaxIdleConns = 2
 	// 	- SetConnMaxLifetime: 0, connections are reused forever
+	
 	db.SetMaxOpenConns(maxConn)
 	db.SetMaxIdleConns(maxIdleConn)
 	db.SetConnMaxLifetime(time.Duration(maxLifetimeConn))

@@ -48,3 +48,7 @@ created this initial schema for the database
 added first route and controller entry to get cloud providers from database
 
 ![alt text](images/diary/firstroute.png)
+
+post queries working with jwt tokens
+
+![alt text](images/diary/postjwtquery.png)

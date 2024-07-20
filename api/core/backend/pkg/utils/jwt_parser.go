@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -53,6 +54,7 @@ func ExtractTokenMetadata(c *fiber.Ctx) (*TokenMetadata, error) {
 }
 
 func extractToken(c *fiber.Ctx) string {
+	
 	bearToken := c.Get("Authorization")
 
 	// Normally Authorization HTTP header.
@@ -69,6 +71,7 @@ func verifyToken(c *fiber.Ctx) (*jwt.Token, error) {
 
 	token, err := jwt.Parse(tokenString, jwtKeyFunc)
 	if err != nil {
+		fmt.Println("error parsing token")
 		return nil, err
 	}
 
