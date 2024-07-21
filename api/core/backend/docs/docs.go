@@ -426,6 +426,166 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/resource": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new resource.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "create a new resource",
+                "parameters": [
+                    {
+                        "description": "Name",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateResourceRequest"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete resource by given ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "delete resource by given ID",
+                "parameters": [
+                    {
+                        "description": "Resource ID",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/resource/{id}": {
+            "get": {
+                "description": "Get resource by given ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resource"
+                ],
+                "summary": "get resource by given ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Resource ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Resource"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/resources": {
+            "get": {
+                "description": "Get all exists resources.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "get all exists resources",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Resource"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/resourcetypes": {
+            "get": {
+                "description": "Get all exists cloud providers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ResourceTypes"
+                ],
+                "summary": "get all exists cloud providers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ResourceType"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/stack": {
             "post": {
                 "security": [
@@ -783,15 +943,41 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "description": "validate:\"required\"` + "`" + `",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "validate:\"required\"` + "`" + `",
                     "type": "string"
                 },
                 "slug": {
-                    "description": "validate:\"required\"` + "`" + `",
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreateResourceRequest": {
+            "type": "object",
+            "required": [
+                "cloud_provider_slug",
+                "resource_name",
+                "stack_name",
+                "type"
+            ],
+            "properties": {
+                "cloud_provider_slug": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3
+                },
+                "resource_name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3
+                },
+                "stack_name": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -835,12 +1021,18 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Stack": {
+        "models.Resource": {
             "type": "object",
             "required": [
                 "name"
             ],
             "properties": {
+                "cloud_prov_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -849,6 +1041,46 @@ const docTemplate = `{
                 },
                 "project_id": {
                     "type": "integer"
+                },
+                "res_type_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResourceType": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Stack": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },

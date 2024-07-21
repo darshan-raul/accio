@@ -15,6 +15,7 @@ func PrivateRoutes(a *fiber.App) {
 	route.Post("/book", middleware.JWTProtected(), controllers.CreateBook)           // create a new book
 	route.Post("/project", middleware.JWTProtected(), controllers.CreateProject)
 	route.Post("/stack", middleware.JWTProtected(), controllers.CreateStack)
+	route.Post("/resource", middleware.JWTProtected(), controllers.CreateResource)
 	route.Post("/token/renew", middleware.JWTProtected(), controllers.RenewTokens)   // renew Access & Refresh tokens
 
 	// Routes for PUT method:
@@ -24,5 +25,6 @@ func PrivateRoutes(a *fiber.App) {
 	route.Delete("/book", middleware.JWTProtected(), controllers.DeleteBook) // delete one book by ID
 	route.Delete("/project", middleware.JWTProtected(), controllers.DeleteProject)
 	route.Delete("/stack", middleware.JWTProtected(), controllers.DeleteStack)
+	route.Delete("/resource", middleware.JWTProtected(), controllers.DeleteResource)
 
 }

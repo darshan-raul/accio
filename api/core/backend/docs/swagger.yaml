@@ -42,14 +42,33 @@ definitions:
   models.CloudProv:
     properties:
       id:
-        description: validate:"required"`
         type: integer
       name:
-        description: validate:"required"`
         type: string
       slug:
-        description: validate:"required"`
         type: string
+    type: object
+  models.CreateResourceRequest:
+    properties:
+      cloud_provider_slug:
+        maxLength: 32
+        minLength: 3
+        type: string
+      resource_name:
+        maxLength: 32
+        minLength: 3
+        type: string
+      stack_name:
+        maxLength: 32
+        minLength: 3
+        type: string
+      type:
+        type: string
+    required:
+    - cloud_provider_slug
+    - resource_name
+    - stack_name
+    - type
     type: object
   models.CreateStackRequest:
     properties:
@@ -78,14 +97,44 @@ definitions:
     required:
     - name
     type: object
-  models.Stack:
+  models.Resource:
     properties:
+      cloud_prov_id:
+        type: integer
+      created_at:
+        type: string
       id:
         type: integer
       name:
         type: string
       project_id:
         type: integer
+      res_type_id:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - name
+    type: object
+  models.ResourceType:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Stack:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      project_id:
+        type: integer
+      updated_at:
+        type: string
     required:
     - name
     type: object
@@ -385,6 +434,108 @@ paths:
       summary: get all exists projects
       tags:
       - Projects
+  /v1/resource:
+    delete:
+      consumes:
+      - application/json
+      description: Delete resource by given ID.
+      parameters:
+      - description: Resource ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: delete resource by given ID
+      tags:
+      - Resource
+    post:
+      consumes:
+      - application/json
+      description: Create a new resource.
+      parameters:
+      - description: Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CreateResourceRequest'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new resource
+      tags:
+      - Resource
+  /v1/resource/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get resource by given ID.
+      parameters:
+      - description: Resource ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Resource'
+      summary: get resource by given ID
+      tags:
+      - Resource
+  /v1/resources:
+    get:
+      consumes:
+      - application/json
+      description: Get all exists resources.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Resource'
+            type: array
+      summary: get all exists resources
+      tags:
+      - Resources
+  /v1/resourcetypes:
+    get:
+      consumes:
+      - application/json
+      description: Get all exists cloud providers.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ResourceType'
+            type: array
+      summary: get all exists cloud providers
+      tags:
+      - ResourceTypes
   /v1/stack:
     delete:
       consumes:

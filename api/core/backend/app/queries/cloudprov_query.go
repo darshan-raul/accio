@@ -29,3 +29,23 @@ func (q *CloudProvQueries) GetCloudProvs() ([]models.CloudProv, error) {
 	// Return query result.
 	return cloudprovs, nil
 }
+
+
+// GetCloudProvByName method for getting one cloudprov by given Name.
+func (q *CloudProvQueries) GetCloudProvBySlug(slug string) (models.CloudProv, error) {
+	// Define cloudprov variable.
+	cloudprov := models.CloudProv{}
+
+	// Define query string.
+	query := `SELECT id,name FROM cloudproviders WHERE slug = $1`
+
+	// Send query to database.
+	err := q.Get(&cloudprov, query, slug)
+	if err != nil {
+		// Return empty object and error.
+		return cloudprov, err
+	}
+
+	// Return query result.
+	return cloudprov, nil
+}

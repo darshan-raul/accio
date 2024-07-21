@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	// "fmt"
-	"fmt"
+
 	"strconv"
 	"time"
 
@@ -12,15 +11,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// GetStacks func gets all exists stacks.
-// @Description Get all exists stacks.
-// @Summary get all exists stacks
-// @Tags Stacks
+// GetResources func gets all exists resources.
+// @Description Get all exists resources.
+// @Summary get all exists resources
+// @Tags Resources
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Stack
-// @Router /v1/stacks [get]
-func GetStacks(c *fiber.Ctx) error {
+// @Success 200 {array} models.Resource
+// @Router /v1/resources [get]
+func GetResources(c *fiber.Ctx) error {
 	// Create database connection.
 	db, err := database.OpenDBConnection()
 	if err != nil {
@@ -31,15 +30,15 @@ func GetStacks(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get all stacks.
-	stacks, err := db.GetStacks()
+	// Get all resources.
+	resources, err := db.GetResources()
 	if err != nil {
-		// Return, if stacks not found.
+		// Return, if resources not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":    true,
-			"msg":      "stacks were not found",
+			"msg":      "resources were not found",
 			"count":    0,
-			"stacks": nil,
+			"resources": nil,
 			"err":      err,
 		})
 	}
@@ -48,22 +47,22 @@ func GetStacks(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error":    false,
 		"msg":      nil,
-		"count":    len(stacks),
-		"stacks": stacks,
+		"count":    len(resources),
+		"resources": resources,
 	})
 }
 
-// GetStack func gets stack by given ID or 404 error.
-// @Description Get stack by given ID.
-// @Summary get stack by given ID
-// @Tags Stack
+// GetResource func gets resource by given ID or 404 error.
+// @Description Get resource by given ID.
+// @Summary get resource by given ID
+// @Tags Resource
 // @Accept json
 // @Produce json
-// @Param id path string true "Stack ID"
-// @Success 200 {object} models.Stack
-// @Router /v1/stack/{id} [get]
-func GetStack(c *fiber.Ctx) error {
-	// Catch stack ID from URL.
+// @Param id path string true "Resource ID"
+// @Success 200 {object} models.Resource
+// @Router /v1/resource/{id} [get]
+func GetResource(c *fiber.Ctx) error {
+	// Catch resource ID from URL.
 	strid := c.Params("id")
 	id, err := strconv.Atoi(strid)
 	if err != nil {
@@ -82,14 +81,14 @@ func GetStack(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get stack by ID.
-	stack, err := db.GetStack(id)
+	// Get resource by ID.
+	resource, err := db.GetResource(id)
 	if err != nil {
-		// Return, if stack not found.
+		// Return, if resource not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":   true,
-			"msg":     "stack with the given ID is not found",
-			"stack": nil,
+			"msg":     "resource with the given ID is not found",
+			"resource": nil,
 		})
 	}
 
@@ -97,21 +96,21 @@ func GetStack(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error":   false,
 		"msg":     nil,
-		"stack": stack,
+		"resource": resource,
 	})
 }
 
-// CreateStack func for creates a new stack.
-// @Description Create a new stack.
-// @Summary create a new stack
-// @Tags Stack
+// CreateResource func for creates a new resource.
+// @Description Create a new resource.
+// @Summary create a new resource
+// @Tags Resource
 // @Accept json
 // @Produce json
 // @Param name body string true "Name"
-// @Success 200 {object} models.CreateStackRequest
+// @Success 200 {object} models.CreateResourceRequest
 // @Security ApiKeyAuth
-// @Router /v1/stack [post]
-func CreateStack(c *fiber.Ctx) error {
+// @Router /v1/resource [post]
+func CreateResource(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
@@ -125,7 +124,7 @@ func CreateStack(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set expiration time from JWT data of current stack.
+	// Set expiration time from JWT data of current resource.
 	expires := claims.Expires
 
 	// Checking, if now time greather than expiration from JWT.
@@ -137,13 +136,13 @@ func CreateStack(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create new Stack struct
-	stack := &models.Stack{}
+	// Create new Resource struct
+	resource := &models.Resource{}
 
-	stackreq := &models.CreateStackRequest{}
+	resourcereq := &models.CreateResourceRequest{}
 
 	// Check, if received JSON data is valid.
-	if err := c.BodyParser(stackreq); err != nil {
+	if err := c.BodyParser(resourcereq); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -151,9 +150,7 @@ func CreateStack(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Println(stackreq.ProjectName)
-	fmt.Println(stackreq.StackName)
-
+	
 	// Create database connection.
 	db, err := database.OpenDBConnection()
 	if err != nil {
@@ -165,12 +162,12 @@ func CreateStack(c *fiber.Ctx) error {
 	}
 
 
-	// Create a new validator for a Stack model.
+	// Create a new validator for a Resource model.
 	validate := utils.NewValidator()
 
 
-	// Validate stack fields.
-	if err := validate.Struct(stackreq); err != nil {
+	// Validate resource fields.
+	if err := validate.Struct(resourcereq); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -179,9 +176,12 @@ func CreateStack(c *fiber.Ctx) error {
 	}
 
 
-	var project models.Project
+	var stack models.Stack
+	var cloudprov models.CloudProv
+	var resourcetype models.ResourceType
+
     
-	project, err = db.GetProjectByName(stackreq.ProjectName)
+	stack, err = db.GetStackByName(resourcereq.StackName)
 
 	if err != nil {
 		// Return, if some fields are not valid.
@@ -191,13 +191,38 @@ func CreateStack(c *fiber.Ctx) error {
 	})
 	}
 
-	stack.Name = stackreq.StackName
-	stack.ProjectId = project.ID
+
+	cloudprov, err = db.GetCloudProvBySlug(resourcereq.CloudProviderSlug)
+
+	if err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   utils.ValidatorErrors(err),
+	})
+	}
+
+	resourcetype, err = db.GetResourceTypeByName(resourcereq.Type)
+
+	if err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   utils.ValidatorErrors(err),
+	})
+	}
+
+	resource.Name = resourcereq.ResourceName
+	resource.CloudProvId = cloudprov.ID
+	resource.StackId = stack.ID
+	resource.TypeId = resourcetype.ID
+
+
 	// Set initialized default data for project:
-	stack.CreatedAt = time.Now()
+	resource.CreatedAt = time.Now()
 	
-	// // Create stack by given model.
-	if err := db.CreateStack(stack); err != nil {
+	// // Create resource by given model.
+	if err := db.CreateResource(resource); err != nil {
 		// Return status 500 and error message.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -209,21 +234,22 @@ func CreateStack(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error":   false,
 		"msg":     nil,
-		"stack": stack,
+		"resource": resource,
 	})
 }
 
-// DeleteStack func for deletes stack by given ID.
-// @Description Delete stack by given ID.
-// @Summary delete stack by given ID
-// @Tags Stack
+
+// DeleteResource func for deletes resource by given ID.
+// @Description Delete resource by given ID.
+// @Summary delete resource by given ID
+// @Tags Resource
 // @Accept json
 // @Produce json
-// @Param id body string true "Stack ID"
+// @Param id body string true "Resource ID"
 // @Success 204 {string} status "ok"
 // @Security ApiKeyAuth
-// @Router /v1/stack [delete]
-func DeleteStack(c *fiber.Ctx) error {
+// @Router /v1/resource [delete]
+func DeleteResource(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
@@ -237,7 +263,7 @@ func DeleteStack(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set expiration time from JWT data of current stack.
+	// Set expiration time from JWT data of current resource.
 	expires := claims.Expires
 
 	// Checking, if now time greather than expiration from JWT.
@@ -249,11 +275,11 @@ func DeleteStack(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create new Stack struct
-	stack := &models.Stack{}
+	// Create new Resource struct
+	resource := &models.Resource{}
 
 	// Check, if received JSON data is valid.
-	if err := c.BodyParser(stack); err != nil {
+	if err := c.BodyParser(resource); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -261,11 +287,11 @@ func DeleteStack(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create a new validator for a Stack model.
+	// Create a new validator for a Resource model.
 	validate := utils.NewValidator()
 
-	// Validate stack fields.
-	if err := validate.StructPartial(stack, "id"); err != nil {
+	// Validate resource fields.
+	if err := validate.StructPartial(resource, "id"); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -282,15 +308,15 @@ func DeleteStack(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-	fmt.Println(stack.ID)
-	// Checking, if stack with given ID is exists.
-	foundedStack, err := db.GetStack(stack.ID)
+
+	// Checking, if resource with given ID is exists.
+	foundedResource, err := db.GetResource(resource.ID)
 	if err != nil {
-		// Return status 404 and stack not found error.
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": true, "msg":   "stack with this ID not found"})
+		// Return status 404 and resource not found error.
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": true, "msg":   "resource with this ID not found"})
 	}
-	fmt.Println(foundedStack)
-	if err := db.DeleteStack(foundedStack.ID); err != nil {
+
+	if err := db.DeleteResource(foundedResource.ID); err != nil {
 		// Return status 500 and error message.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,

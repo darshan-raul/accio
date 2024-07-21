@@ -48,14 +48,33 @@ func (q *StackQueries) GetStack(id int) (models.Stack, error) {
 	return stack, nil
 }
 
+// GetStack method for getting one stack by given Name.
+func (q *StackQueries) GetStackByName(name string) (models.Stack, error) {
+	// Define stack variable.
+	stack := models.Stack{}
+
+	// Define query string.
+	query := `SELECT id,name FROM stacks WHERE name = $1`
+
+	// Send query to database.
+	err := q.Get(&stack, query, name)
+	if err != nil {
+		// Return empty object and error.
+		return stack, err
+	}
+
+	// Return query result.
+	return stack, nil
+}
+
 
 // CreateStack method for creating book by given Stack object.
 func (q *StackQueries) CreateStack(p *models.Stack) error {
 	// Define query string.
-	query := `INSERT INTO stacks (name,project_id) VALUES ($1, $2)`
+	query := `INSERT INTO stacks (name,project_id,created_at) VALUES ($1, $2,$3)`
 
 	// Send query to database.
-	_, err := q.Exec(query, p.Name, p.ProjectId)
+	_, err := q.Exec(query, p.Name, p.ProjectId, p.CreatedAt)
 	if err != nil {
 		// Return only error.
 		return err
