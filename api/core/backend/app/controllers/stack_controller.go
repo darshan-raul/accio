@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	// "fmt"
 	"fmt"
 	"strconv"
 	"time"
@@ -11,15 +12,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// GetProjects func gets all exists projects.
-// @Description Get all exists projects.
-// @Summary get all exists projects
-// @Tags Projects
+// GetStacks func gets all exists stacks.
+// @Description Get all exists stacks.
+// @Summary get all exists stacks
+// @Tags Stacks
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Project
-// @Router /v1/projects [get]
-func GetProjects(c *fiber.Ctx) error {
+// @Success 200 {array} models.Stack
+// @Router /v1/stacks [get]
+func GetStacks(c *fiber.Ctx) error {
 	// Create database connection.
 	db, err := database.OpenDBConnection()
 	if err != nil {
@@ -30,15 +31,15 @@ func GetProjects(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get all projects.
-	projects, err := db.GetProjects()
+	// Get all stacks.
+	stacks, err := db.GetStacks()
 	if err != nil {
-		// Return, if projects not found.
+		// Return, if stacks not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":    true,
-			"msg":      "projects were not found",
+			"msg":      "stacks were not found",
 			"count":    0,
-			"projects": nil,
+			"stacks": nil,
 			"err":      err,
 		})
 	}
@@ -47,22 +48,22 @@ func GetProjects(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error":    false,
 		"msg":      nil,
-		"count":    len(projects),
-		"projects": projects,
+		"count":    len(stacks),
+		"stacks": stacks,
 	})
 }
 
-// GetProject func gets project by given ID or 404 error.
-// @Description Get project by given ID.
-// @Summary get project by given ID
-// @Tags Project
+// GetStack func gets stack by given ID or 404 error.
+// @Description Get stack by given ID.
+// @Summary get stack by given ID
+// @Tags Stack
 // @Accept json
 // @Produce json
-// @Param id path string true "Project ID"
-// @Success 200 {object} models.Project
-// @Router /v1/project/{id} [get]
-func GetProject(c *fiber.Ctx) error {
-	// Catch project ID from URL.
+// @Param id path string true "Stack ID"
+// @Success 200 {object} models.Stack
+// @Router /v1/stack/{id} [get]
+func GetStack(c *fiber.Ctx) error {
+	// Catch stack ID from URL.
 	strid := c.Params("id")
 	id, err := strconv.Atoi(strid)
 	if err != nil {
@@ -81,14 +82,14 @@ func GetProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get project by ID.
-	project, err := db.GetProject(id)
+	// Get stack by ID.
+	stack, err := db.GetStack(id)
 	if err != nil {
-		// Return, if project not found.
+		// Return, if stack not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":   true,
-			"msg":     "project with the given ID is not found",
-			"project": nil,
+			"msg":     "stack with the given ID is not found",
+			"stack": nil,
 		})
 	}
 
@@ -96,21 +97,21 @@ func GetProject(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error":   false,
 		"msg":     nil,
-		"project": project,
+		"stack": stack,
 	})
 }
 
-// CreateProject func for creates a new project.
-// @Description Create a new project.
-// @Summary create a new project
-// @Tags Project
+// CreateStack func for creates a new stack.
+// @Description Create a new stack.
+// @Summary create a new stack
+// @Tags Stack
 // @Accept json
 // @Produce json
 // @Param name body string true "Name"
-// @Success 200 {object} models.Project
+// @Success 200 {object} models.CreateStackRequest
 // @Security ApiKeyAuth
-// @Router /v1/project [post]
-func CreateProject(c *fiber.Ctx) error {
+// @Router /v1/stack [post]
+func CreateStack(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
@@ -124,7 +125,7 @@ func CreateProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set expiration time from JWT data of current project.
+	// Set expiration time from JWT data of current stack.
 	expires := claims.Expires
 
 	// Checking, if now time greather than expiration from JWT.
@@ -136,17 +137,22 @@ func CreateProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create new Project struct
-	project := &models.Project{}
+	// Create new Stack struct
+	stack := &models.Stack{}
+
+	stackreq := &models.CreateStackRequest{}
 
 	// Check, if received JSON data is valid.
-	if err := c.BodyParser(project); err != nil {
+	if err := c.BodyParser(stackreq); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
+
+	fmt.Println(stackreq.ProjectName)
+	fmt.Println(stackreq.StackName)
 
 	// Create database connection.
 	db, err := database.OpenDBConnection()
@@ -158,14 +164,13 @@ func CreateProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create a new validator for a Project model.
+
+	// Create a new validator for a Stack model.
 	validate := utils.NewValidator()
 
-	// Set initialized default data for project:
-	project.CreatedAt = time.Now()
 
-	// Validate project fields.
-	if err := validate.Struct(project); err != nil {
+	// Validate stack fields.
+	if err := validate.Struct(stackreq); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -173,8 +178,24 @@ func CreateProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create project by given model.
-	if err := db.CreateProject(project); err != nil {
+
+	var project models.Project
+    
+	project, err = db.GetProjectByName(stackreq.ProjectName)
+
+	if err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   utils.ValidatorErrors(err),
+	})
+	}
+
+	stack.Name = stackreq.StackName
+	stack.ProjectId = project.ID
+
+	// // Create stack by given model.
+	if err := db.CreateStack(stack); err != nil {
 		// Return status 500 and error message.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -186,21 +207,21 @@ func CreateProject(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error":   false,
 		"msg":     nil,
-		"project": project,
+		"stack": stack,
 	})
 }
 
-// DeleteProject func for deletes project by given ID.
-// @Description Delete project by given ID.
-// @Summary delete project by given ID
-// @Tags Project
+// DeleteStack func for deletes stack by given ID.
+// @Description Delete stack by given ID.
+// @Summary delete stack by given ID
+// @Tags Stack
 // @Accept json
 // @Produce json
-// @Param id body string true "Project ID"
+// @Param id body string true "Stack ID"
 // @Success 204 {string} status "ok"
 // @Security ApiKeyAuth
-// @Router /v1/project [delete]
-func DeleteProject(c *fiber.Ctx) error {
+// @Router /v1/stack [delete]
+func DeleteStack(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
 
@@ -214,7 +235,7 @@ func DeleteProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set expiration time from JWT data of current project.
+	// Set expiration time from JWT data of current stack.
 	expires := claims.Expires
 
 	// Checking, if now time greather than expiration from JWT.
@@ -226,11 +247,11 @@ func DeleteProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create new Project struct
-	project := &models.Project{}
+	// Create new Stack struct
+	stack := &models.Stack{}
 
 	// Check, if received JSON data is valid.
-	if err := c.BodyParser(project); err != nil {
+	if err := c.BodyParser(stack); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -238,11 +259,11 @@ func DeleteProject(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create a new validator for a Project model.
+	// Create a new validator for a Stack model.
 	validate := utils.NewValidator()
 
-	// Validate project fields.
-	if err := validate.StructPartial(project, "id"); err != nil {
+	// Validate stack fields.
+	if err := validate.StructPartial(stack, "id"); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -259,15 +280,15 @@ func DeleteProject(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-	fmt.Println(project.ID)
-	// Checking, if project with given ID is exists.
-	foundedProject, err := db.GetProject(project.ID)
+	fmt.Println(stack.ID)
+	// Checking, if stack with given ID is exists.
+	foundedStack, err := db.GetStack(stack.ID)
 	if err != nil {
-		// Return status 404 and project not found error.
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": true, "msg":   "project with this ID not found"})
+		// Return status 404 and stack not found error.
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": true, "msg":   "stack with this ID not found"})
 	}
-	fmt.Println(foundedProject)
-	if err := db.DeleteProject(foundedProject.ID); err != nil {
+	fmt.Println(foundedStack)
+	if err := db.DeleteStack(foundedStack.ID); err != nil {
 		// Return status 500 and error message.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,

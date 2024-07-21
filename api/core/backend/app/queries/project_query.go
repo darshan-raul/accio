@@ -37,7 +37,7 @@ func (q *ProjectQueries) GetProject(id int) (models.Project, error) {
 	project := models.Project{}
 
 	// Define query string.
-	query := `SELECT * FROM projects WHERE id = $1`
+	query := `SELECT id,name FROM projects WHERE id = $1`
 
 	// Send query to database.
 	err := q.Get(&project, query, id)
@@ -51,6 +51,25 @@ func (q *ProjectQueries) GetProject(id int) (models.Project, error) {
 }
 
 
+// GetProject method for getting one project by given ID.
+func (q *ProjectQueries) GetProjectByName(name string) (models.Project, error) {
+	// Define project variable.
+	project := models.Project{}
+
+	// Define query string.
+	query := `SELECT id,name FROM projects WHERE name = $1`
+
+	// Send query to database.
+	err := q.Get(&project, query, name)
+	if err != nil {
+		// Return empty object and error.
+		return project, err
+	}
+
+	// Return query result.
+	return project, nil
+}
+
 // CreateProject method for creating book by given Project object.
 func (q *ProjectQueries) CreateProject(p *models.Project) error {
 	// Define query string.
@@ -58,6 +77,23 @@ func (q *ProjectQueries) CreateProject(p *models.Project) error {
 
 	// Send query to database.
 	_, err := q.Exec(query, p.Name, p.CreatedAt)
+	if err != nil {
+		// Return only error.
+		return err
+	}
+
+	// This query returns nothing.
+	return nil
+}
+
+
+// DeleteProject method for delete project by given ID.
+func (q *ProjectQueries) DeleteProject(id int) error {
+	// Define query string.
+	query := `DELETE FROM projects WHERE id = $1`
+
+	// Send query to database.
+	_, err := q.Exec(query, id)
 	if err != nil {
 		// Return only error.
 		return err

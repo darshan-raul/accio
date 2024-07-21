@@ -17,6 +17,9 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/cloudprovs", controllers.GetCloudProvs)
 	route.Get("/projects", controllers.GetProjects)
 	route.Get("/project/:id", controllers.CreateProject)
+
+	route.Get("/stacks", controllers.GetStacks)
+	route.Get("/stack/:id", controllers.GetStack)
 	
 	// Routes for POST method:
 	route.Post("/user/sign/up", controllers.UserSignUp) // register a new user

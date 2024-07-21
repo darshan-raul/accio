@@ -13,6 +13,7 @@ type Queries struct {
 	*queries.BookQueries // load queries from Book model
 	*queries.CloudProvQueries
 	*queries.ProjectQueries
+	*queries.StackQueries
 }
 
 // OpenDBConnection func for opening database connection.
@@ -44,5 +45,6 @@ func OpenDBConnection() (*Queries, error) {
 		BookQueries: &queries.BookQueries{DB: db}, // from Book model
 		CloudProvQueries: &queries.CloudProvQueries{DB: db},
 		ProjectQueries: &queries.ProjectQueries{DB: db},
+		StackQueries: &queries.StackQueries{DB: db},
 	}, nil
 }
