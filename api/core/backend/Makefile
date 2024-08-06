@@ -36,7 +36,7 @@ migrate.down:
 migrate.force:
 	migrate -path $(MIGRATIONS_FOLDER) -database "$(DATABASE_URL)" force $(version)
 
-docker.run: docker.network docker.postgres swag docker.fiber docker.redis migrate.up
+docker.run: docker.network docker.postgres swag docker.fiber docker.redis migrate.up docker.dozzle
 
 docker.network:
 	docker network inspect dev-network >/dev/null 2>&1 || \
@@ -69,6 +69,12 @@ docker.redis:
 		--network dev-network \
 		-p 6379:6379 \
 		redis
+
+docker.dozzle:
+	docker run -d  \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	-p 8080:8080 \
+	amir20/dozzle:latest
 
 docker.stop: docker.stop.fiber docker.stop.postgres docker.stop.redis
 
