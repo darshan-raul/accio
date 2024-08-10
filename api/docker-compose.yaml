@@ -2,9 +2,9 @@ services:
   db:
     image: postgres
     restart: always
-    environment: &env # these will be reused below [compose fragment concept]
-      POSTGRES_PASSWORD: accio
-      POSTGRES_USER: accio
+    environment: &psqlenv # these will be reused below [compose fragment concept]
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: acciod
       POSTGRES_DB: accio
     volumes:
       - type: volume
@@ -14,44 +14,50 @@ services:
       - 5432:5432
     networks:
       - backend
-  core_api:
-    build: ./core/
-    ports:
-      - "3000:3000"
-    develop:
-      watch:
-        - path: ./core/
-          action: rebuild
-    environment:
-      <<: *env 
-      POSTGRES_HOST: "db"
-      POSTGRES_PORT: "5432"
-      KAFKA_URL: "broker"
-    depends_on:
-      - "db"
-    networks:
-      - backend
-  validator_api:
-    build: ./validator/
-    ports:
-      - "8000:8000"
-    develop:
-      watch:
-        - path: ./validator/
-          action: rebuild
-    environment:
-      CORE_API: "core_api"
-    depends_on:
-      - "core_api"
-    networks:
-      - backend
-  adminer:
-    image: adminer
+  redis:
+    image: redis
     restart: always
     ports:
-      - 8080:8080
+      - 6379:6379
     networks:
       - backend
+  core:
+    image: core-api:0.1
+    restart: always
+    environment:
+      JWT_SECRET_KEY: secret
+      JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT: 15
+      JWT_REFRESH_KEY: "refresh"
+      JWT_REFRESH_KEY_EXPIRE_HOURS_COUNT: 720
+      DB_TYPE: "pgx"
+      DB_HOST: "db"
+      DB_PORT: 5432
+      DB_USER: "acciod"
+      DB_PASSWORD: "password"
+      DB_NAME: "accio"
+      DB_SSL_MODE: "disable"
+      DB_MAX_CONNECTIONS: 100
+      DB_MAX_IDLE_CONNECTIONS: 10
+      DB_MAX_LIFETIME_CONNECTIONS: 2
+      REDIS_HOST: "redis"
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      REDIS_DB_NUMBER: 0
+      STAGE_STATUS: "dev"
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: 5000
+      SERVER_READ_TIMEOUT: 60
+    ports:
+      - 5000:5000
+    networks:
+      - backend
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+      broker:
+        condition: service_started
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
     hostname: zookeeper

@@ -17,7 +17,11 @@ spec:
       containers:
       - image: api-core_api:latest
         name: accio
-        imagePullPolicy: Never
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          runAsNonRoot: true
         ports:
         - containerPort: 3000
           name: postgres

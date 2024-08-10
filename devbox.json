@@ -22,7 +22,9 @@
       "tilt@latest",
       "yq-go@latest",
       "act@latest",
-      "kubent@latest"
+      "kubent@latest",
+      "neovim@latest",
+       "vimPlugins.LazyVim@latest"
     ],
     "shell": {
       "init_hook": [

@@ -937,6 +937,54 @@
         }
       }
     },
+    "neovim@latest": {
+      "last_modified": "2024-07-25T18:56:32Z",
+      "resolved": "github:NixOS/nixpkgs/2122a9b35b35719ad9a395fe783eabb092df01b1#neovim",
+      "source": "devbox-search",
+      "version": "0.10.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xb3959wfymm41q494bcsr076zhd7iy30-neovim-0.10.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xb3959wfymm41q494bcsr076zhd7iy30-neovim-0.10.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6p8p4i16h9f8s21a95khrx4s7dwhj6cx-neovim-0.10.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6p8p4i16h9f8s21a95khrx4s7dwhj6cx-neovim-0.10.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4p9b4xm0l8j2ki25v2yszdjdmdawzgd6-neovim-0.10.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4p9b4xm0l8j2ki25v2yszdjdmdawzgd6-neovim-0.10.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/r42ydp43zin4plqblhmc21sxbldcd561-neovim-0.10.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/r42ydp43zin4plqblhmc21sxbldcd561-neovim-0.10.1"
+        }
+      }
+    },
     "oras@latest": {
       "last_modified": "2024-07-20T09:11:00Z",
       "resolved": "github:NixOS/nixpkgs/6e14bbce7bea6c4efd7adfa88a40dac750d80100#oras",
@@ -1152,6 +1200,54 @@
             }
           ],
           "store_path": "/nix/store/qfv96sjcsslynqbilwj823x8nxvgj5cv-tilt-0.33.17"
+        }
+      }
+    },
+    "vimPlugins.LazyVim@latest": {
+      "last_modified": "2024-07-28T04:39:20Z",
+      "resolved": "github:NixOS/nixpkgs/038fb464fcfa79b4f08131b07f2d8c9a6bcc4160#vimPlugins.LazyVim",
+      "source": "devbox-search",
+      "version": "2024-07-25",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zdxbd9wdxwh4nrv6yzqyqpr091ab6r1i-vimplugin-LazyVim-2024-07-25",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zdxbd9wdxwh4nrv6yzqyqpr091ab6r1i-vimplugin-LazyVim-2024-07-25"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dh98j793j8kac7vysc4fp01vb8d9ybb7-vimplugin-LazyVim-2024-07-25",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/dh98j793j8kac7vysc4fp01vb8d9ybb7-vimplugin-LazyVim-2024-07-25"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8hpd9y15dxjgp9jayvrhnxvaxzmqfxv4-vimplugin-LazyVim-2024-07-25",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8hpd9y15dxjgp9jayvrhnxvaxzmqfxv4-vimplugin-LazyVim-2024-07-25"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1a69w0i514paivv6ks5rp7fc7q46gcj4-vimplugin-LazyVim-2024-07-25",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/1a69w0i514paivv6ks5rp7fc7q46gcj4-vimplugin-LazyVim-2024-07-25"
         }
       }
     },
