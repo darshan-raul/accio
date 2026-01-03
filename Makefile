@@ -1,2 +1,16 @@
-create_postgres:
-	docker run --name postgres -e POSTGRES_PASSWORD=asdf123 --network=host -d -v /home/codespace/postgres:/var/lib/postgresql/data postgres
+.PHONY: up down setup clean
+
+up:
+	docker-compose -f infrastructure/docker-compose.yml up -d
+
+down:
+	docker-compose -f infrastructure/docker-compose.yml down
+
+setup:
+	@echo "Creating .env files if they don't exist..."
+	@touch accio-api/.env
+	@touch accio-mcp/.env
+	@echo "Setup complete."
+
+clean:
+	docker-compose -f infrastructure/docker-compose.yml down -v
