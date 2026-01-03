@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Database for Keycloak and potentially other services
+  postgres:
+    image: postgres:15
+    container_name: accio_postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - accio-network
+    ports:
+      - "5432:5432"
+
+  # Keycloak for Authentication
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.0
+    container_name: accio_keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak-realm.json:/opt/keycloak/data/import/realm.json
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - accio-network
+
+  # Redis for API Server caching/sessions
+  redis:
+    image: redis:7-alpine
+    container_name: accio_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - accio-network
+
+  # Mailhog for testing emails
+  mailhog:
+    image: mailhog/mailhog
+    container_name: accio_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - accio-network
+
+networks:
+  accio-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
