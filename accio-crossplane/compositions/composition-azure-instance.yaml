@@ -1,0 +1,28 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xcomputevms.azure.accio.io
+  labels:
+    provider: azure
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XComputeVM
+  resources:
+  - name: azure-vm
+    base:
+      apiVersion: compute.azure.upbound.io/v1beta1
+      kind: LinuxVirtualMachine
+      spec:
+        forProvider:
+          location: East US
+          size: Standard_B1s
+          adminUsername: azureuser
+          networkInterfaceIds: [] # Simplified for example
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.location
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.instanceType
+      toFieldPath: spec.forProvider.size

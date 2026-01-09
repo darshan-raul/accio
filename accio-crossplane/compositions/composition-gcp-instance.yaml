@@ -1,0 +1,29 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xcomputevms.gcp.accio.io
+  labels:
+    provider: gcp
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XComputeVM
+  resources:
+  - name: gcp-instance
+    base:
+      apiVersion: compute.gcp.upbound.io/v1beta1
+      kind: Instance
+      spec:
+        forProvider:
+          zone: us-central1-a
+          machineType: e2-micro
+          bootDisk:
+            initializeParams:
+              image: debian-cloud/debian-11
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.zone # Mapping region to zone roughly for example
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.instanceType
+      toFieldPath: spec.forProvider.machineType

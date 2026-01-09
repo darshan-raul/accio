@@ -1,0 +1,29 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xcomputevms.aws.accio.io
+  labels:
+    provider: aws
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XComputeVM
+  resources:
+  - name: ec2-instance
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Instance
+      spec:
+        forProvider:
+          ami: ami-0c55b159cbfafe1f0
+          instanceType: t3.micro
+          region: us-east-1
+          tags:
+            ManagedBy: "upshift"
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.region
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.instanceType
+      toFieldPath: spec.forProvider.instanceType

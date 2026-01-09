@@ -1,0 +1,50 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xdatabaseinstances.azure.accio.io
+  labels:
+    provider: azure
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XDatabaseInstance
+  resources:
+  - name: azure-sql
+    base:
+      apiVersion: dbforpostgresql.azure.upbound.io/v1beta1
+      kind: Server
+      spec:
+        forProvider:
+          location: East US
+          skuName: B_Gen5_1
+          version: "11"
+          sslEnforcement: "Enabled"
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.location
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xstoragebuckets.azure.accio.io
+  labels:
+    provider: azure
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XStorageBucket
+  resources:
+  - name: azure-connection
+    base:
+      apiVersion: storage.azure.upbound.io/v1beta1
+      kind: Account
+      spec:
+        forProvider:
+          location: East US
+          accountTier: Standard
+          accountReplicationType: LRS
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.location

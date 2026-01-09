@@ -13,7 +13,24 @@ async def chat(request: ChatMessage):
     """
     Send a message to the AI and get a streaming response (simulated for now).
     """
-    # TODO: Integrate with LLM and MCP
+    # Using LangChain for LLM integration
+    # For now, defaulting to OpenAI, but structure allows easy swapping
+    # for Bedrock, Claude, etc. via LangChain's abstraction.
+    from langchain_openai import ChatOpenAI
+    from langchain.schema import HumanMessage, SystemMessage
+
+    # In a real scenario, API keys should be loaded from environment variables
+    llm = ChatOpenAI(temperature=0.7)
+
+    messages = [
+        SystemMessage(content="You are a helpful AI assistant."),
+        HumanMessage(content=request.message),
+    ]
+
+    response = llm.invoke(messages)
+    
+    # For now, just return the content. In the future, this might stream or handle tools (MCP).
+    return {"response": response.content, "conversation_id": request.conversation_id or "new_id"}
     return {"response": f"Echo: {request.message}", "conversation_id": request.conversation_id or "new_id"}
 
 @router.websocket("/ws")

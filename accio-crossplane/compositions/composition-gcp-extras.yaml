@@ -1,0 +1,47 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xdatabaseinstances.gcp.accio.io
+  labels:
+    provider: gcp
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XDatabaseInstance
+  resources:
+  - name: cloud-sql
+    base:
+      apiVersion: sql.gcp.upbound.io/v1beta1
+      kind: DatabaseInstance
+      spec:
+        forProvider:
+          region: us-central1
+          settings:
+          - tier: db-f1-micro
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.region
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xstoragebuckets.gcp.accio.io
+  labels:
+    provider: gcp
+spec:
+  compositeTypeRef:
+    apiVersion: accio.io/v1alpha1
+    kind: XStorageBucket
+  resources:
+  - name: gcp-bucket
+    base:
+      apiVersion: storage.gcp.upbound.io/v1beta1
+      kind: Bucket
+      spec:
+        forProvider:
+          location: US
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.parameters.region
+      toFieldPath: spec.forProvider.location
