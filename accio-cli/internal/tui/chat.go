@@ -18,7 +18,7 @@ type model struct {
 	messages    []string
 }
 
-func NewProgram() *tea.Program {
+func NewChatProgram() *tea.Program {
 	return tea.NewProgram(initialModel())
 }
 

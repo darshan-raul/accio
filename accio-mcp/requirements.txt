@@ -1,8 +1,0 @@
-mcp
-boto3
-azure-identity
-azure-mgmt-resource
-google-cloud-resource-manager
-gitpython
-jinja2
-pydantic
