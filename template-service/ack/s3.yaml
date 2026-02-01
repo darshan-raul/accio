@@ -1,0 +1,8 @@
+apiVersion: kro.run/v1alpha1
+kind: Darshan
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  name: my-app
+  bucketName: gdhdfgfdsjgysfhkghsfifgsdjhbvakjdgflkjfdaghjhsdfvhj

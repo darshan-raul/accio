@@ -1,0 +1,9 @@
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: accio-demo-bucket
+  namespace: default
+spec:
+  name: accio-demo-bucket-unique-sgfgfdgsf6987sfdg # S3 bucket names must be globally uniqu
+  versioning:
+    status: Enabled

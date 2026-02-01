@@ -1,0 +1,25 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: darshan
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: Darshan
+    spec:
+      # Input parameters users provide when creating an Application
+      name: string  
+      bucketName: string
+    status:
+      # Output values exposed to users (CEL expressions pointing to resources)
+      bucketARN: ${bucket.status.ackResourceMetadata.arn}
+  resources:
+    # S3 Bucket managed by ACK
+    - id: bucket
+      template:
+        apiVersion: s3.services.k8s.aws/v1alpha1
+        kind: Bucket
+        metadata:
+          name: ${schema.spec.bucketName}
+        spec:
+          name: ${schema.spec.bucketName}
