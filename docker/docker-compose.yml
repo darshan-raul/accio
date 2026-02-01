@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: accio-postgres
+    environment:
+      POSTGRES_USER: accio
+      POSTGRES_PASSWORD: accio_password
+      POSTGRES_DB: accio
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - accio-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U accio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0
+    container_name: accio-keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: accio
+      KC_DB_PASSWORD: accio_password
+      KC_HOSTNAME: localhost
+    ports:
+      - "8888:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./keycloak-realm.json:/opt/keycloak/data/import/realm.json
+    networks:
+      - accio-net
+
+networks:
+  accio-net:
+    driver: bridge
+
+volumes:
+  postgres_data:

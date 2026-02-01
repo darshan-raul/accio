@@ -3,6 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"accio/internal/auth"
+
 	"github.com/spf13/cobra"
 )
 
@@ -16,12 +18,20 @@ var loginCmd = &cobra.Command{
 		fmt.Println("  1. Opening browser to Keycloak")
 		fmt.Println("  2. Authorize Accio CLI")
 		fmt.Println("  3. Grant cloud permissions")
-		fmt.Println("\n🌐 URL: http://localhost:8080/realms/accio/protocol/openid-connect/auth")
-		fmt.Println("\n⏳ Waiting for authentication...")
 
-		// TODO: Implement actual OAuth flow
-		fmt.Println("\n✅ Login successful! (simulated)")
-		fmt.Println("🔑 Token stored in ~/.accio/config.yaml")
+		token, err := auth.Login()
+		if err != nil {
+			fmt.Printf("\n❌ Login failed: %v\n", err)
+			return
+		}
+
+		if err := auth.SaveToken(token); err != nil {
+			fmt.Printf("\n❌ Failed to save token: %v\n", err)
+			return
+		}
+
+		fmt.Println("\n✅ Login successful!")
+		fmt.Println("🔑 Token stored in ~/.accio/token.json")
 	},
 }
 

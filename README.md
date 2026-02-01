@@ -1,108 +1,22 @@
-# ACCIO: AI Cloud Platform
+# Accio
 
-Accio is an MCP-based AI Cloud Platform that enables LLMs to manage cloud infrastructure across AWS, Azure, and GCP using a strict GitOps workflow.
+![alt text](images/accio-logo.png)
 
-## Components
+> **CLI-first, AI-assisted, GitOps-enabled cloud infrastructure platform.**
+> Analyze your code, generate optimal cloud infrastructure, and let GitOps do the rest.
 
-- **accio-cli**: Go-based CLI tool for interaction.
-- **accio-api**: FastAPI server for platform logic and auth.
-- **accio-mcp**: MCP Server providing tools for the AI.
-- **accio-crossplane**: Crossplane XRDs and Compositions for multi-cloud infrastructure.
-- **accio-argocd**: ArgoCD configuration for GitOps sync.
+---
 
-```mermaid
-graph TB
-    subgraph User["User Layer"]
-        CLI["CLI Tool<br/>(Golang)"]
-    end
+## 1. Philosophy & Design Principles
 
-    subgraph Backend["Backend Services"]
-        API["API Server"]
-        KC["Keycloak<br/>Identity Provider"]
-        LLM["LLM"]
-    end
+Accio is built around a core set of beliefs about how cloud infrastructure should work for developers:
 
-    subgraph MCP["MCP Layer"]
-        MCPS["MCP Server<br/>(Crossplane Generator)"]
-    end
+**Code is the source of truth for what you need. Git is the source of truth for what exists.** You never manually click through a cloud console. You never run `terraform apply` from a laptop. Every infrastructure state change is a commit, every commit is a sync, every sync is reconciled by the platform.
 
-    subgraph K8s["Kubernetes + Crossplane"]
-        XRD["XRDs<br/>(ComputeVM, Database, Storage)"]
-        COMP["Compositions<br/>(AWS, Azure, GCP)"]
-        CLAIM["Claims<br/>(User Resources)"]
-    end
+**AI reduces the gap between intent and implementation.** Most developers know what their application does but not what infrastructure it needs. Accio's job is to close that gap — not by guessing, but by analyzing your actual code and reasoning about it with context from its knowledge base.
 
-    subgraph CloudProviders["Cloud Providers"]
-        AWS["AWS"]
-        Azure["Azure"]
-        GCP["GCP"]
-    end
+**The platform should get out of your way after the initial setup.** Once your stack is running, you interact with it through the same CLI — asking questions, checking costs, monitoring health — without needing to know where the resources actually live or how they are wired together.
 
-    subgraph GitOps["GitOps"]
-        GIT["GitHub or<br/>Any Git Repo"]
-        ARGO["ArgoCD"]
-    end
+**Everything is namespaced. Nothing is shared by accident.** Every managed resource Crossplane creates is namespaced within a Kubernetes cluster. Teams cannot accidentally clobber each other's infrastructure.
 
-    CLI -->|"API Requests"| API
-    API -->|"Authentication"| KC
-    KC -->|"Auth Tokens"| API
-    API <-->|"Chat/Commands"| LLM
-    LLM -->|"Tool Calls"| MCPS
-    MCPS -->|"Generate Claims"| CLAIM
-    MCPS -->|"Create PRs<br/>Commit Manifests"| GIT
-    GIT -->|"Syncs"| ARGO
-    ARGO -->|"Applies Manifests"| K8s
-    CLAIM -->|"Uses"| COMP
-    COMP -->|"References"| XRD
-    COMP -->|"Provisions"| CloudProviders
-    
-    style User fill:#e1f5ff
-    style Backend fill:#fff4e1
-    style MCP fill:#f0e1ff
-    style K8s fill:#ffe8f0
-    style CloudProviders fill:#e1ffe1
-    style GitOps fill:#ffe1e1
-
-```
-
-## Quick Start
-
-### Prerequisites
-- Docker & Docker Compose
-- Go 1.21+ (for CLI)
-- Python 3.10+ (for API/MCP)
-- Kubernetes cluster (for Crossplane)
-- Crossplane installed in the cluster
-
-### Setup
-
-1. **Start Infrastructure**:
-   ```bash
-   make up
-   ```
-   This spins up Keycloak, Redis, and Postgres.
-
-2. **Run API Server**:
-   ```bash
-   cd accio-api
-   pip install -r requirements.txt
-   uvicorn app.main:app --reload
-   ```
-
-3. **Run MCP Server**:
-   ```bash
-   cd accio-mcp
-   pip install -r requirements.txt
-   python server.py
-   ```
-
-4. **Build CLI**:
-   ```bash
-   cd accio-cli
-   go build -o accio
-   ./accio login
-   ```
-
-## Documentation
-
-See generic documentation in `docs/`.
+---
